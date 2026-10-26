@@ -1,0 +1,3 @@
+Paste the public Loom, YouTube, Vimeo, or Google Drive link on the first line of this file.
+
+The recording script is in WALKTHROUGH.md.

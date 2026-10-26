@@ -1,0 +1,6 @@
+Standup notes
+
+Ada is writing the kickoff document.
+Lin will review it this afternoon.
+
+Please keep comments in the document itself. Do not paste <script>alert(1)</script> into a text import.
