@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const imported = await importFile(file.name, buffer);
     if (!imported.ok) return jsonError(imported.error, 400);
-    const created = createDocument(getDb(), user.id, imported.title, imported.html);
+    const created = await createDocument(await getDb(), user.id, imported.title, imported.html);
     if (!created.ok) return jsonError(created.error, created.status);
     revalidateDocumentList();
     return Response.json({ document: created.value }, { status: 201 });

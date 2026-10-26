@@ -23,13 +23,13 @@ export async function currentUser(): Promise<User | null> {
   const jar = await cookies();
   const sessionId = jar.get(SESSION_COOKIE)?.value;
   if (!sessionId) return null;
-  return getUserBySession(getDb(), sessionId);
+  return await getUserBySession(await getDb(), sessionId);
 }
 
 export async function clearSessionCookie() {
   const jar = await cookies();
   const sessionId = jar.get(SESSION_COOKIE)?.value;
-  if (sessionId) deleteSession(getDb(), sessionId);
+  if (sessionId) await deleteSession(await getDb(), sessionId);
   jar.set(SESSION_COOKIE, "", sessionCookie(0));
 }
 

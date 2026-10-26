@@ -1,6 +1,6 @@
 # Architecture
 
-Folio is a Next.js application with server-rendered pages and a small JSON API. Documents, users, sessions, and shares live in one SQLite file through Node's built-in `node:sqlite`. There is no separate database service to configure or pay for.
+Folio is a Next.js application with server-rendered pages and a small JSON API. Documents, users, sessions, and shares live in Turso in production through the asynchronous `@libsql/client`. Development can reuse a local SQLite file through the same client. Initialization caches a promise, creates missing schema objects, and preserves the seed marker and existing data.
 
 ## What was prioritized
 
@@ -31,7 +31,7 @@ Three users are seeded on first launch. Passwords are hashed with scrypt. A succ
 - Two editors can overwrite each other. The latest save is kept.
 - There is no presence indicator, comment thread, or history.
 - Import understands `.txt`, `.md`, and `.docx` only. Other Word formats and PDF files are rejected.
-- The SQLite file is local to the server. A serverless host with an ephemeral disk will lose documents when the instance is replaced. Use a persistent volume, or run it locally.
+- Production requires a remote Turso URL and auth token. Local development data must be backed up and explicitly imported before switching an existing deployment to Turso.
 
 ## With another 2–4 hours
 

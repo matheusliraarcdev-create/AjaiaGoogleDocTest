@@ -8,7 +8,9 @@ export const runtime = "nodejs";
 export async function GET() {
   const user = await currentUser();
   if (!user) return jsonError("Sign in to continue.", 401);
-  return Response.json({ documents: listDocuments(getDb(), user.id), users: listUsers(getDb()) });
+  const db = await getDb();
+  const [documents, users] = await Promise.all([listDocuments(db, user.id), listUsers(db)]);
+  return Response.json({ documents, users });
 }
 
 export async function POST(request: Request) {
@@ -20,7 +22,7 @@ export async function POST(request: Request) {
   const contentHtml = typeof body?.contentHtml === "string" ? body.contentHtml : "<p></p>";
 
   try {
-    const created = createDocument(getDb(), user.id, title, contentHtml);
+    const created = await createDocument(await getDb(), user.id, title, contentHtml);
     if (!created.ok) return jsonError(created.error, created.status);
     revalidateDocumentList();
     return Response.json({ document: created.value }, { status: 201 });

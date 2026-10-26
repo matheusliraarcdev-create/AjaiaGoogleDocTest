@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const user = await currentUser();
   const { id } = await params;
   if (!user) return { title: "Document" };
-  const document = getDocument(getDb(), id, user.id);
+  const document = await getDocument(await getDb(), id, user.id);
   return { title: document?.title ?? "Document unavailable" };
 }
 
@@ -22,8 +22,8 @@ export default async function DocumentPage({ params }: PageProps) {
   const user = await currentUser();
   if (!user) redirect("/login");
   const { id } = await params;
-  const document = getDocument(getDb(), id, user.id);
+  const document = await getDocument(await getDb(), id, user.id);
   if (!document) notFound();
-  const directory = listUsers(getDb()).filter((person) => person.id !== document.ownerId);
+  const directory = (await listUsers(await getDb())).filter((person) => person.id !== document.ownerId);
   return <EditorShell user={user} initialDocument={document} directory={directory} />;
 }

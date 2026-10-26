@@ -11,6 +11,6 @@ export const metadata: Metadata = { title: "Documents" };
 export default async function DocumentsPage() {
   const user = await currentUser();
   if (!user) redirect("/login");
-  const documents = listDocuments(getDb(), user.id);
+  const documents = await listDocuments(await getDb(), user.id);
   return <DocumentHome user={user} documents={documents} />;
 }

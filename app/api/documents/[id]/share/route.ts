@@ -15,7 +15,7 @@ export async function POST(request: Request, context: RouteContext) {
   const permission = typeof body?.permission === "string" ? body.permission : "";
 
   try {
-    const shared = setShare(getDb(), id, user.id, email, permission);
+    const shared = await setShare(await getDb(), id, user.id, email, permission);
     if (!shared.ok) return jsonError(shared.error, shared.status);
     revalidateDocumentList();
     return Response.json({ document: shared.value });
@@ -33,7 +33,7 @@ export async function DELETE(request: Request, context: RouteContext) {
   if (!userId) return jsonError("Choose who should lose access.", 400);
 
   try {
-    const removed = removeShare(getDb(), id, user.id, userId);
+    const removed = await removeShare(await getDb(), id, user.id, userId);
     if (!removed.ok) return jsonError(removed.error, removed.status);
     revalidateDocumentList();
     return Response.json({ document: removed.value });

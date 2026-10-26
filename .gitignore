@@ -6,3 +6,7 @@ data/*
 .env.local
 *.log
 npm-debug.log*
+.vercel
+
+.env.*
+*.tsbuildinfo

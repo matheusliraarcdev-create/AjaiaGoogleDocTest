@@ -13,9 +13,10 @@ export async function POST(request: Request) {
   if (!email || !password) return jsonError("Enter an email and password.", 400);
 
   try {
-    const user = authenticate(getDb(), email, password);
+    const db = await getDb();
+    const user = await authenticate(db, email, password);
     if (!user) return jsonError("Email or password is incorrect.", 401);
-    const sessionId = createSession(getDb(), user.id);
+    const sessionId = await createSession(db, user.id);
     const jar = await cookies();
     jar.set(SESSION_COOKIE, sessionId, sessionCookie());
     return Response.json({ user });

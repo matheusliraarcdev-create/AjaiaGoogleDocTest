@@ -10,7 +10,7 @@ export async function GET(_request: Request, context: RouteContext) {
   const user = await currentUser();
   if (!user) return jsonError("Sign in to continue.", 401);
   const { id } = await context.params;
-  const document = getDocument(getDb(), id, user.id);
+  const document = await getDocument(await getDb(), id, user.id);
   if (!document) return jsonError("Document not found.", 404);
   return Response.json({ document });
 }
@@ -36,7 +36,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 
   try {
-    const updated = updateDocument(getDb(), id, user.id, patch);
+    const updated = await updateDocument(await getDb(), id, user.id, patch);
     if (!updated.ok) return jsonError(updated.error, updated.status);
     revalidateDocumentList();
     return Response.json({ document: updated.value });
@@ -51,7 +51,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
   if (!user) return jsonError("Sign in to delete this document.", 401);
   const { id } = await context.params;
   try {
-    const removed = deleteDocument(getDb(), id, user.id);
+    const removed = await deleteDocument(await getDb(), id, user.id);
     if (!removed.ok) return jsonError(removed.error, removed.status);
     revalidateDocumentList();
     return Response.json(removed.value);
