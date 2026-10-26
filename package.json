@@ -12,6 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@libsql/client": "^0.18.0",
     "@tiptap/extension-placeholder": "^2.27.3",
     "@tiptap/extension-underline": "^2.27.3",
     "@tiptap/pm": "^2.27.3",
