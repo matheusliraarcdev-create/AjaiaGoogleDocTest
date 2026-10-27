@@ -18,6 +18,7 @@
     "@tiptap/pm": "^2.27.3",
     "@tiptap/react": "^2.27.3",
     "@tiptap/starter-kit": "^2.27.3",
+    "docx": "^9.14.0",
     "mammoth": "^1.13.0",
     "marked": "^18.1.2",
     "next": "^16.4.3",

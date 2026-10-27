@@ -34,7 +34,9 @@ export function EditorShell({
   const [error, setError] = useState("");
   const [shareOpen, setShareOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const savedHtml = useRef(initialDocument.contentHtml);
+  const latestHtml = useRef(initialDocument.contentHtml);
   const savedTitle = useRef(initialDocument.title);
   const latestTitle = useRef(initialDocument.title);
   const pendingHtml = useRef<string | null>(null);
@@ -78,6 +80,7 @@ export function EditorShell({
   );
 
   function queueSave(html: string) {
+    latestHtml.current = html;
     if (!canEdit || html === savedHtml.current) return;
     pendingHtml.current = html;
     setStatus("unsaved");
@@ -161,6 +164,30 @@ export function EditorShell({
     titleTimer.current = window.setTimeout(() => void persistTitle(latestTitle.current), 400);
   }
 
+  async function exportDocument() {
+    setExporting(true);
+    try {
+      const exportTitle = title.trim() || "Untitled document";
+      const { exportDocx } = await import("@/lib/export-docx");
+      const blob = await exportDocx(exportTitle, latestHtml.current);
+      const url = URL.createObjectURL(blob);
+      const link = window.document.createElement("a");
+      link.href = url;
+      link.download = `${exportTitle.replace(/[<>:"/\\|?*\u0000-\u001f]/g, "_").replace(/[. ]+$/g, "").slice(0, 140) || "document"}.docx`;
+      window.document.body.append(link);
+      try {
+        link.click();
+      } finally {
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+    } catch {
+      setError("Could not export the document. Try again.");
+    } finally {
+      setExporting(false);
+    }
+  }
+
   async function deleteDocument() {
     if (!window.confirm("Delete this document for everyone who has access?")) return;
     setDeleting(true);
@@ -219,6 +246,9 @@ export function EditorShell({
           </span>
           <button type="button" className="button button-secondary" onClick={() => setShareOpen(true)}>
             Share
+          </button>
+          <button type="button" className="button button-secondary" onClick={() => void exportDocument()} disabled={exporting} title="Download as Word (.docx)">
+            {exporting ? "Exporting?" : "Export"}
           </button>
           {isOwner ? (
             <button type="button" className="button button-danger" onClick={() => void deleteDocument()} disabled={deleting}>
